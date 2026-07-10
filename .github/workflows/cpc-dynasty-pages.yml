@@ -1,0 +1,37 @@
+name: Deploy CPC Dynasty Mobile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cpc-dynasty/**"
+      - ".github/workflows/cpc-dynasty-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: cpc-dynasty-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload CPC Dynasty site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: cpc-dynasty
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
